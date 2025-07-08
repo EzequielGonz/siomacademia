@@ -19,7 +19,7 @@ export const metadata = {
     description: "Siom Academia: Formación profesional de calidad para impulsar tu carrera y desarrollo personal.",
     images: [
       {
-        url: "/logo.png",
+        url: "https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png",
         width: 500,
         height: 500,
         alt: "Logo Siom Academia"
@@ -31,10 +31,10 @@ export const metadata = {
     card: "summary_large_image",
     title: "Siom Academia",
     description: "Siom Academia: Formación profesional de calidad para impulsar tu carrera y desarrollo personal.",
-    images: ["/logo.png"]
+    images: ["https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png"]
   },
   icons: {
-    icon: "/logo.png"
+    icon: "https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png"
   }
 };
 
@@ -42,14 +42,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="icon" href="https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png" type="image/png" />
         <meta property="og:title" content="Siom Academia" />
         <meta property="og:description" content="Siom Academia: Formación profesional de calidad para impulsar tu carrera y desarrollo personal." />
-        <meta property="og:image" content="/logo.png" />
+        <meta property="og:image" content="https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Siom Academia" />
         <meta name="twitter:description" content="Siom Academia: Formación profesional de calidad para impulsar tu carrera y desarrollo personal." />
-        <meta name="twitter:image" content="/logo.png" />
+        <meta name="twitter:image" content="https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
