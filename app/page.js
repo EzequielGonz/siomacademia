@@ -3,6 +3,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import PaymentModal from "./components/PaymentModal";
+import Link from "next/link";
 
 export default function Home() {
   const [paymentModal, setPaymentModal] = useState({
@@ -299,9 +300,9 @@ export default function Home() {
             ))}
           </div>
           <div className="flex justify-center mt-10">
-            <a href="/cursos" className="bg-[#FFD700] text-[#1A237E] font-bold px-8 py-4 rounded-full shadow-lg hover:bg-white hover:text-[#1A237E] transition-all duration-300">
+            <Link href="/cursos" className="bg-[#FFD700] text-[#1A237E] font-bold px-8 py-4 rounded-full shadow-lg hover:bg-white hover:text-[#1A237E] transition-all duration-300">
               Ver Cursos
-            </a>
+            </Link>
           </div>
         </div>
       </section>
