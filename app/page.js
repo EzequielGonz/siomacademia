@@ -3,6 +3,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import PaymentModal from "./components/PaymentModal";
+import ClientOnly from "./components/ClientOnly";
 import Link from "next/link";
 
 export default function Home() {
@@ -31,19 +32,22 @@ export default function Home() {
   return (
     <div className="bg-white text-[#1A237E] font-sans min-h-screen flex flex-col">
       {/* Header */}
-      <motion.header 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full flex justify-between items-center px-6 md:px-12 py-4 bg-[#1A237E] text-white shadow-lg sticky top-0 z-50"
-      >
+      <ClientOnly>
+        <motion.header 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full flex justify-between items-center px-6 md:px-12 py-4 bg-[#1A237E] text-white shadow-lg sticky top-0 z-50"
+        >
         <div className="flex items-center gap-3">
-          <motion.div 
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-transparent"
-          >
-            <Image src="https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png" alt="Logo Siom Academia" width={40} height={40} />
-          </motion.div>
+          <Link href="/">
+            <motion.div 
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-transparent cursor-pointer"
+            >
+              <Image src="https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png" alt="Logo Siom Academia" width={40} height={40} />
+            </motion.div>
+          </Link>
           <span className="text-xl md:text-2xl font-bold tracking-wide">SIOM Academia</span>
         </div>
         <nav className="hidden md:flex gap-8 text-base font-medium">
@@ -82,6 +86,7 @@ export default function Home() {
           </svg>
         </motion.button>
       </motion.header>
+      </ClientOnly>
 
       {/* Hero */}
       <motion.section 
@@ -246,19 +251,22 @@ export default function Home() {
                 icon: "M13 10V3L4 14h7v7l9-11h-7z",
                 title: "Liderazgo Estratégico",
                 description: "Desarrolla tus habilidades de liderazgo y gestión de equipos con expertos en la materia. Aprende técnicas modernas de motivación y dirección.",
-                price: 299
+                price: 299,
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80"
               },
               {
                 icon: "M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2",
                 title: "Marketing Digital",
                 description: "Aprende las estrategias más efectivas para posicionar tu marca en el mundo digital. Desde redes sociales hasta SEO avanzado.",
-                price: 399
+                price: 399,
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80"
               },
               {
                 icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1",
                 title: "Finanzas Personales",
                 description: "Gestiona tus finanzas y alcanza la libertad financiera con nuestros especialistas. Aprende inversión, ahorro y planificación.",
-                price: 249
+                price: 249,
+                image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&q=80"
               }
             ].map((course, index) => (
               <motion.div
@@ -270,6 +278,9 @@ export default function Home() {
                 whileHover={{ y: -10, scale: 1.02 }}
                 className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-[#FFD700] hover:shadow-2xl transition-all duration-300"
               >
+                {course.image && (
+                  <img src={course.image} alt={course.title} className="w-full h-56 object-cover rounded-xl mb-4" />
+                )}
                 <motion.div 
                   whileHover={{ scale: 1.1 }}
                   className="w-16 h-16 bg-gradient-to-br from-[#1A237E] to-[#283593] rounded-xl flex items-center justify-center mb-6"
@@ -280,21 +291,26 @@ export default function Home() {
                 </motion.div>
                 <h3 className="text-2xl font-bold mb-4 text-[#1A237E]">{course.title}</h3>
                 <p className="text-gray-600 mb-6 leading-relaxed">{course.description}</p>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
                   <motion.span 
                     whileHover={{ scale: 1.1 }}
                     className="text-2xl font-bold text-[#FFD700]"
                   >
                     ${course.price}
                   </motion.span>
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handlePayment(course.title, course.price)}
-                    className="bg-[#1A237E] text-white px-6 py-2 rounded-lg hover:bg-[#283593] transition-colors duration-300"
-                  >
-                    Inscribirse
-                  </motion.button>
+                  <div className="flex gap-2 mt-2 md:mt-0">
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handlePayment(course.title, course.price)}
+                      className="bg-[#1A237E] text-white px-3 py-1.5 rounded-2xl text-sm hover:bg-[#283593] transition-colors duration-300"
+                    >
+                      Inscribirse
+                    </motion.button>
+                    <Link href={`/cursos?curso=${encodeURIComponent(course.title)}`} className="bg-[#FFD700] text-[#1A237E] px-3 py-1.5 rounded-2xl text-sm font-semibold hover:bg-white hover:text-[#1A237E] border border-[#FFD700] transition-colors duration-300">
+                      Ver detalles
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -431,19 +447,22 @@ export default function Home() {
                 name: "Ana Torres",
                 role: "Directora General",
                 description: "Más de 15 años de experiencia en formación profesional y desarrollo de talento.",
-                initial: "A"
+                initial: "A",
+                image: "https://randomuser.me/api/portraits/women/44.jpg"
               },
               {
                 name: "Carlos Ruiz",
                 role: "Instructor Senior",
                 description: "Especialista en liderazgo y gestión empresarial con certificaciones internacionales.",
-                initial: "C"
+                initial: "C",
+                image: "https://randomuser.me/api/portraits/men/32.jpg"
               },
               {
                 name: "Lucía Gómez",
                 role: "Coordinadora Académica",
                 description: "Experta en metodologías educativas y seguimiento personalizado de estudiantes.",
-                initial: "L"
+                initial: "L",
+                image: "https://randomuser.me/api/portraits/women/65.jpg"
               }
             ].map((member, index) => (
               <motion.div
@@ -458,9 +477,13 @@ export default function Home() {
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 360 }}
                   transition={{ duration: 0.6 }}
-                  className="w-24 h-24 bg-gradient-to-br from-[#1A237E] to-[#283593] rounded-full flex items-center justify-center mx-auto mb-6"
+                  className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 bg-gradient-to-br from-[#1A237E] to-[#283593] overflow-hidden"
                 >
-                  <span className="text-white font-bold text-2xl">{member.initial}</span>
+                  {member.image ? (
+                    <img src={member.image} alt={member.name} className="w-24 h-24 object-cover rounded-full" />
+                  ) : (
+                    <span className="text-white font-bold text-2xl">{member.initial}</span>
+                  )}
                 </motion.div>
                 <h3 className="text-xl font-bold mb-2 text-[#1A237E]">{member.name}</h3>
                 <p className="text-gray-500 mb-4">{member.role}</p>
@@ -787,12 +810,10 @@ export default function Home() {
                 Formación profesional de calidad para impulsar tu carrera y desarrollo personal.
               </p>
               {/* Newsletter */}
-              <form className="flex flex-col gap-3" onSubmit={e => { e.preventDefault(); alert('¡Gracias por suscribirte!'); }}>
-                <label htmlFor="newsletter" className="text-sm font-semibold">Suscríbete al newsletter</label>
-                <div className="flex">
-                  <input id="newsletter" type="email" required placeholder="Tu email" className="px-3 py-2 rounded-l-lg text-[#1A237E] focus:outline-none focus:ring-2 focus:ring-[#FFD700] w-full" />
-                  <button type="submit" className="bg-[#FFD700] text-[#1A237E] px-4 py-2 rounded-r-lg font-bold hover:bg-white transition-colors">Suscribirse</button>
-                </div>
+              <form className="flex flex-col md:flex-row gap-3 items-center" onSubmit={e => { e.preventDefault(); alert('¡Gracias por suscribirte!'); }}>
+                <label htmlFor="newsletter" className="text-sm font-semibold md:mb-0 md:mr-2">Suscríbete al newsletter</label>
+                <input id="newsletter" type="email" required placeholder="Tu email" className="px-3 py-2 rounded-l-lg text-[#1A237E] focus:outline-none focus:ring-2 focus:ring-[#FFD700] w-full md:w-auto" />
+                <button type="submit" className="bg-[#FFD700] text-[#1A237E] px-4 py-2 rounded-r-lg font-bold hover:bg-white transition-colors">Suscribirse</button>
               </form>
             </div>
             <div>
@@ -901,6 +922,11 @@ export default function Home() {
         course={paymentModal.course}
         amount={paymentModal.amount}
       />
+      {/* Botón flotante de WhatsApp */}
+      <a href="https://wa.me/5491123456789" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg p-4 flex items-center justify-center animate-bounce" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }} aria-label="WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 24 24"><path d="M20.52 3.48A12 12 0 0 0 3.48 20.52l-1.32 4.84a1 1 0 0 0 1.22 1.22l4.84-1.32A12 12 0 1 0 20.52 3.48zm-8.52 17a9 9 0 1 1 9-9 9 9 0 0 1-9 9zm4.29-6.71a1 1 0 0 1-1.42 0l-1.29-1.29a1 1 0 0 1 0-1.42l.29-.29a1 1 0 0 0 0-1.42l-2.29-2.29a1 1 0 0 0-1.42 0l-.29.29a1 1 0 0 1-1.42 0l-1.29-1.29a1 1 0 0 1 0-1.42l.29-.29a1 1 0 0 0 0-1.42l-2.29-2.29a1 1 0 0 0-1.42 0l-.29.29a1 1 0 0 1-1.42 0z"/>
+        </svg>
+      </a>
     </div>
   );
 }

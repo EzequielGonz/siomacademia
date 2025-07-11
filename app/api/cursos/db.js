@@ -25,7 +25,7 @@ const init = () => {
           {
             nombre: "Liderazgo Estratégico",
             descripcion: "Desarrolla habilidades de liderazgo y gestión de equipos con expertos. Incluye casos prácticos y mentoría.",
-            imagen: "/public/globe.svg",
+            imagen: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80",
             descuento: 20,
             duracion: "8 semanas",
             nivel: "Avanzado",
@@ -36,7 +36,7 @@ const init = () => {
           {
             nombre: "Marketing Digital",
             descripcion: "Aprende estrategias efectivas para posicionar tu marca en el mundo digital. Incluye SEO, redes y campañas.",
-            imagen: "/public/next.svg",
+            imagen: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
             descuento: 0,
             duracion: "6 semanas",
             nivel: "Intermedio",
@@ -47,7 +47,7 @@ const init = () => {
           {
             nombre: "Finanzas Personales",
             descripcion: "Gestiona tus finanzas y alcanza la libertad financiera. Incluye inversión, ahorro y planificación.",
-            imagen: "/public/vercel.svg",
+            imagen: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&q=80",
             descuento: 10,
             duracion: "5 semanas",
             nivel: "Básico",
@@ -58,7 +58,7 @@ const init = () => {
           {
             nombre: "Desarrollo Personal",
             descripcion: "Potencia tu crecimiento personal y profesional con herramientas de autoconocimiento y coaching.",
-            imagen: "/public/window.svg",
+            imagen: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
             descuento: 15,
             duracion: "4 semanas",
             nivel: "Todos los niveles",
@@ -70,7 +70,7 @@ const init = () => {
           {
             nombre: "Programación Web Full Stack",
             descripcion: "Aprende a crear aplicaciones web modernas con JavaScript, Node.js y React.",
-            imagen: "/public/next.svg",
+            imagen: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80",
             descuento: 25,
             duracion: "12 semanas",
             nivel: "Avanzado",
@@ -81,7 +81,7 @@ const init = () => {
           {
             nombre: "Diseño Gráfico Profesional",
             descripcion: "Domina herramientas de diseño y crea piezas visuales impactantes.",
-            imagen: "/public/window.svg",
+            imagen: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=600&q=80",
             descuento: 5,
             duracion: "7 semanas",
             nivel: "Intermedio",
@@ -92,7 +92,7 @@ const init = () => {
           {
             nombre: "Inglés para Negocios",
             descripcion: "Mejora tu inglés enfocado en el mundo empresarial y las reuniones internacionales.",
-            imagen: "/public/globe.svg",
+            imagen: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
             descuento: 0,
             duracion: "10 semanas",
             nivel: "Básico",

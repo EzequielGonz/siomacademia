@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import PaymentModal from "../components/PaymentModal";
+import ClientOnly from "../components/ClientOnly";
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 
@@ -36,7 +37,7 @@ export default function Cursos() {
   const [porPagina, setPorPagina] = useState(6);
   const PRECIO_BASE = 120000;
 
-  // Fetch cursos desde la API
+  // useEffect para poblar filtros únicos
   useEffect(() => {
     const params = new URLSearchParams();
     if (nivel !== "Todos") params.append("nivel", nivel);
@@ -48,7 +49,15 @@ export default function Cursos() {
     if (porPagina) params.append("porPagina", porPagina);
     fetch(`/api/cursos?${params.toString()}`)
       .then(res => res.json())
-      .then(data => setCursosData(Array.isArray(data.cursos) ? data.cursos : []));
+      .then(data => {
+        const cursos = Array.isArray(data.cursos) ? data.cursos : [];
+        setCursosData(cursos);
+        // Extraer valores únicos
+        const nivelesUnicos = ["Todos", ...new Set(cursos.map(c => c.nivel).filter(Boolean))];
+        setNiveles(nivelesUnicos);
+        const duracionesUnicas = ["Todos", ...new Set(cursos.map(c => c.duracion).filter(Boolean))];
+        setDuraciones(duracionesUnicas);
+      });
   }, [nivel, duracion, categoria, busqueda, orden, pagina, porPagina]);
 
   // Ordenar cursos
@@ -102,12 +111,13 @@ export default function Cursos() {
 
   return (
     <div className="bg-white text-[#1A237E] font-sans min-h-screen flex flex-col">
-      <motion.header 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="w-full flex justify-between items-center px-6 md:px-12 py-4 bg-[#1A237E] text-white shadow-lg sticky top-0 z-50"
-      >
+      <ClientOnly>
+        <motion.header 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-full flex justify-between items-center px-6 md:px-12 py-4 bg-[#1A237E] text-white shadow-lg sticky top-0 z-50"
+        >
         <div className="flex items-center gap-3">
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
@@ -142,6 +152,7 @@ export default function Cursos() {
           ))}
         </nav>
       </motion.header>
+      </ClientOnly>
 
       <main className="flex-1 py-16 px-6 md:px-12 lg:px-24 bg-gradient-to-br from-[#F5F7FA] to-white">
         <motion.div 
@@ -161,30 +172,26 @@ export default function Cursos() {
             Elige el curso que más se adapte a tus objetivos y potencia tu futuro profesional.
           </p>
         </motion.div>
-        {/* Filtros, búsqueda y ordenamiento */}
+        {/* Filtros, búsqueda y ordenamiento mejorados */}
         <div className="flex flex-wrap gap-4 mb-10 justify-center items-center">
-          <input
-            type="text"
-            placeholder="Buscar por nombre, temario o docente..."
-            value={busqueda}
-            onChange={e => { setBusqueda(e.target.value); setPagina(1); }}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700] min-w-[220px]"
-          />
-          <select value={nivel} onChange={e => { setNivel(e.target.value); setPagina(1); }} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700]">
-            {niveles.map(n => <option key={n}>{n}</option>)}
-          </select>
-          <select value={duracion} onChange={e => { setDuracion(e.target.value); setPagina(1); }} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700]">
-            {duraciones.map(d => <option key={d}>{d}</option>)}
-          </select>
-          <select value={categoria} onChange={e => { setCategoria(e.target.value); setPagina(1); }} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700]">
-            {categorias.map(c => <option key={c}>{c}</option>)}
-          </select>
-          <select value={orden} onChange={e => { setOrden(e.target.value); setPagina(1); }} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700]">
-            {ORDENES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-          <select value={porPagina} onChange={e => { setPorPagina(Number(e.target.value)); setPagina(1); }} className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700]">
-            {[6, 9, 12, 18].map(n => <option key={n} value={n}>{n} por página</option>)}
-          </select>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Buscar por nombre, temario o docente..."
+              value={busqueda}
+              onChange={e => { setBusqueda(e.target.value); setPagina(1); }}
+              className="pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700] min-w-[220px] shadow-sm text-sm"
+            />
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+          </div>
+          <div className="relative">
+            <select value={categoria} onChange={e => { setCategoria(e.target.value); setPagina(1); }} className="appearance-none px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FFD700] bg-white pr-8 shadow-sm text-sm">
+              {categorias.map(c => <option key={c}>{c}</option>)}
+            </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▼</span>
+          </div>
         </div>
         {/* Cursos paginados */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -206,7 +213,7 @@ export default function Cursos() {
               >
                 <Link href={`/cursos/${slug}`} className="block group">
                   <div className="flex justify-center mb-6">
-                    <Image src={curso.imagen} alt={curso.nombre} width={64} height={64} />
+                    <Image src={curso.imagen} alt={curso.nombre} width={120} height={120} className="rounded-lg object-cover" />
                   </div>
                   <h2 className="text-2xl font-bold mb-2 text-[#1A237E] group-hover:underline">{curso.nombre}</h2>
                 </Link>
@@ -246,14 +253,19 @@ export default function Cursos() {
                     </span>
                   )}
                 </div>
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handlePayment(curso.nombre, precioFinal)}
-                  className="bg-[#1A237E] text-white px-6 py-2 rounded-lg hover:bg-[#283593] transition-colors duration-300 font-semibold mt-auto"
-                >
-                  Comprar
-                </motion.button>
+                <div className="flex gap-2 mt-auto">
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handlePayment(curso.nombre, precioFinal)}
+                    className="bg-[#1A237E] text-white px-4 py-2 rounded-lg hover:bg-[#283593] transition-colors duration-300 font-semibold"
+                  >
+                    Comprar
+                  </motion.button>
+                  <Link href={`/cursos/${slug}`} className="bg-[#FFD700] text-[#1A237E] px-4 py-2 rounded-lg font-semibold hover:bg-white hover:text-[#1A237E] border border-[#FFD700] transition-colors duration-300">
+                    Ver detalles
+                  </Link>
+                </div>
               </motion.div>
             );
           })}

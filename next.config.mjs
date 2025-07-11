@@ -3,6 +3,6 @@ const nextConfig = {};
 
 export default {
   images: {
-    domains: ['i.ibb.co'],
+    domains: ['i.ibb.co', 'images.unsplash.com'],
   },
 };

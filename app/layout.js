@@ -40,7 +40,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="icon" href="https://i.ibb.co/cKzpSMMx/SIOMACADEMIA-removebg-preview.png" type="image/png" />
         <meta property="og:title" content="Siom Academia" />
