@@ -32,28 +32,29 @@ export async function GET(req) {
   // Paginación
   const offset = (pagina - 1) * porPagina;
 
-  // Consulta principal
-  const sql = `SELECT * FROM cursos ${whereClause} ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
-  const allParams = [...params, porPagina, offset];
+  try {
+    // Consulta principal
+    const sql = `SELECT * FROM cursos ${whereClause} ORDER BY ${orderBy} LIMIT ? OFFSET ?`;
+    const allParams = [...params, porPagina, offset];
+    const stmt = db.prepare(sql);
+    const rows = stmt.all(allParams);
 
-  // Consulta total para frontend
-  const sqlTotal = `SELECT COUNT(*) as total FROM cursos ${whereClause}`;
+    // Consulta total para frontend
+    const sqlTotal = `SELECT COUNT(*) as total FROM cursos ${whereClause}`;
+    const totalStmt = db.prepare(sqlTotal);
+    const totalRow = totalStmt.get(params);
 
-  return new Promise((resolve, reject) => {
-    db.all(sql, allParams, (err, rows) => {
-      if (err) return resolve(Response.json({ error: err.message }, { status: 500 }));
-      db.get(sqlTotal, params, (err2, totalRow) => {
-        if (err2) return resolve(Response.json({ error: err2.message }, { status: 500 }));
-        // Parsear temario y docentes
-        const cursos = rows.map(c => ({
-          ...c,
-          temario: JSON.parse(c.temario),
-          docentes: JSON.parse(c.docentes)
-        }));
-        resolve(Response.json({ cursos, total: totalRow.total }));
-      });
-    });
-  });
+    // Parsear temario y docentes
+    const cursos = rows.map(c => ({
+      ...c,
+      temario: JSON.parse(c.temario),
+      docentes: JSON.parse(c.docentes)
+    }));
+
+    return Response.json({ cursos, total: totalRow.total });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
 export async function POST(req) {
@@ -64,9 +65,10 @@ export async function POST(req) {
   if (!nombre || !descripcion || !imagen || !duracion || !nivel || !temario || !docentes || !categoria) {
     return Response.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
   }
-  return new Promise((resolve) => {
+  
+  try {
     const stmt = db.prepare(`INSERT INTO cursos (nombre, descripcion, imagen, descuento, duracion, nivel, temario, docentes, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    stmt.run(
+    const result = stmt.run(
       nombre,
       descripcion,
       imagen,
@@ -75,14 +77,12 @@ export async function POST(req) {
       nivel,
       JSON.stringify(temario),
       JSON.stringify(docentes),
-      categoria,
-      function (err) {
-        if (err) return resolve(Response.json({ error: err.message }, { status: 500 }));
-        resolve(Response.json({ id: this.lastID }));
-      }
+      categoria
     );
-    stmt.finalize();
-  });
+    return Response.json({ id: result.lastInsertRowid });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
 export async function PUT(req) {
@@ -93,9 +93,10 @@ export async function PUT(req) {
   if (!id || !nombre || !descripcion || !imagen || !duracion || !nivel || !temario || !docentes || !categoria) {
     return Response.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
   }
-  return new Promise((resolve) => {
+  
+  try {
     const stmt = db.prepare(`UPDATE cursos SET nombre=?, descripcion=?, imagen=?, descuento=?, duracion=?, nivel=?, temario=?, docentes=?, categoria=? WHERE id=?`);
-    stmt.run(
+    const result = stmt.run(
       nombre,
       descripcion,
       imagen,
@@ -105,24 +106,24 @@ export async function PUT(req) {
       JSON.stringify(temario),
       JSON.stringify(docentes),
       categoria,
-      id,
-      function (err) {
-        if (err) return resolve(Response.json({ error: err.message }, { status: 500 }));
-        resolve(Response.json({ updated: this.changes }));
-      }
+      id
     );
-    stmt.finalize();
-  });
+    return Response.json({ updated: result.changes });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 }
 
 export async function DELETE(req) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get('id');
   if (!id) return Response.json({ error: 'Falta el id' }, { status: 400 });
-  return new Promise((resolve) => {
-    db.run('DELETE FROM cursos WHERE id=?', [id], function (err) {
-      if (err) return resolve(Response.json({ error: err.message }, { status: 500 }));
-      resolve(Response.json({ deleted: this.changes }));
-    });
-  });
+  
+  try {
+    const stmt = db.prepare('DELETE FROM cursos WHERE id=?');
+    const result = stmt.run(id);
+    return Response.json({ deleted: result.changes });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 } 

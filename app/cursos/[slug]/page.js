@@ -50,6 +50,8 @@ export default function DetalleCurso() {
   const [curso, setCurso] = useState(null);
   const [favorito, setFavorito] = useState(false);
   const [tab, setTab] = useState("descripcion");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [paymentModal, setPaymentModal] = useState({
     isOpen: false,
     course: null,
@@ -73,17 +75,32 @@ export default function DetalleCurso() {
   };
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
     fetch("/api/cursos")
       .then(res => res.json())
       .then(data => {
         const cursos = Array.isArray(data.cursos) ? data.cursos : [];
-        const encontrado = cursos.find(c => c.nombre.toLowerCase().replace(/ /g, "-") === slug);
-        setCurso(encontrado);
-        setFavorito(
-          typeof window !== "undefined" && localStorage.getItem("favoritos-cursos")
-            ? JSON.parse(localStorage.getItem("favoritos-cursos")).includes(slug)
-            : false
-        );
+        const encontrado = cursos.find(c => {
+          const cursoSlug = c.nombre.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+          return cursoSlug === slug;
+        });
+        if (encontrado) {
+          setCurso(encontrado);
+          setFavorito(
+            typeof window !== "undefined" && localStorage.getItem("favoritos-cursos")
+              ? JSON.parse(localStorage.getItem("favoritos-cursos")).includes(slug)
+              : false
+          );
+        } else {
+          setError("Curso no encontrado");
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error al cargar cursos:", error);
+        setError("Error al cargar el curso");
+        setLoading(false);
       });
   }, [slug]);
 
@@ -102,9 +119,50 @@ export default function DetalleCurso() {
     setFavorito(!favorito);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1A237E] mx-auto mb-4"></div>
+          <p className="text-gray-500">Cargando curso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h1 className="text-2xl font-bold text-[#1A237E] mb-2">Error</h1>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => router.push('/cursos')}
+            className="bg-[#1A237E] text-white px-6 py-3 rounded-lg hover:bg-[#283593] transition-colors"
+          >
+            Volver a Cursos
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!curso) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">Cargando curso...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-gray-500 text-6xl mb-4">❓</div>
+          <h1 className="text-2xl font-bold text-[#1A237E] mb-2">Curso no encontrado</h1>
+          <p className="text-gray-600 mb-4">El curso que buscas no existe o ha sido eliminado.</p>
+          <button 
+            onClick={() => router.push('/cursos')}
+            className="bg-[#1A237E] text-white px-6 py-3 rounded-lg hover:bg-[#283593] transition-colors"
+          >
+            Volver a Cursos
+          </button>
+        </div>
+      </div>
     );
   }
 

@@ -200,7 +200,7 @@ export default function Cursos() {
           )}
           {cursosPagina.map((curso, idx) => {
             const precioFinal = curso.descuento > 0 ? Math.round(PRECIO_BASE * (1 - curso.descuento / 100)) : PRECIO_BASE;
-            const slug = curso.nombre.toLowerCase().replace(/ /g, "-");
+            const slug = curso.nombre.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
             return (
               <motion.div
                 key={curso.nombre}
